@@ -1,0 +1,66 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 700,
+  "height": 300,
+  "title": "Occurence of Earthquakes in the World from 1965-2016",
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/mleu0004/3179-testrepo/main/testing_map.geo.json",
+        "format": {"type": "topojson", "feature": "testing.geo"}
+      },
+      "projection": {"type": "equirectangular"},
+      "mark": {"type": "geoshape", "stroke": "black", "fill": "white"}
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/mleu0004/3179-testrepo/main/database.csv"
+      },
+      "transform": [
+        {"calculate": "year(datum.Date)", "as": "Year"},
+        {"filter": "datum.Magnitude > 0"},
+        {"filter": "datum.Depth > 0"}
+      ],
+      "params": [
+        {
+          "name": "year",
+          "select": {"type": "point", "fields": ["Year"]},
+          "bind": {
+            "Year": {
+              "input": "range",
+              "min": 1965,
+              "max": 2016,
+              "step": 1,
+              "name": "Year : "
+            }
+          }
+        }
+      ],
+      "projection": {"type": "equirectangular"},
+      "mark": "circle",
+      "encoding": {
+        "longitude": {"field": "Longitude", "type": "quantitative"},
+        "latitude": {"field": "Latitude", "type": "quantitative"},
+        "size": {
+          "field": "Magnitude",
+          "type": "quantitative",
+          "scale": {"type": "log"}
+        },
+        "color": {
+          "condition": {
+            "param": "year",
+            "field": "Magnitude",
+            "type": "quantitative"
+          },
+          "value": null
+        },
+        "opacity": {"field": "Depth", "type": "quantitative"},
+        "tooltip": [
+          {"field": "Magnitude", "type": "quantitative"},
+          {"field": "Depth", "type": "quantitative"}
+        ]
+      }
+    }
+  ],
+  "config": {}
+}
